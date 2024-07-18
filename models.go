@@ -28,3 +28,21 @@ func databaseUserToUser(dbUser database.User) User {
 		APIKey:    dbUser.ApiKey,
 	}
 }
+
+type Category struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+}
+
+func databaseCategoryToCategory(dbCategory database.Category) Category {
+	var description *string
+	if dbCategory.Description.Valid {
+		description = &dbCategory.Description.String
+	}
+	return Category{
+		ID:          dbCategory.ID,
+		Name:        dbCategory.Name,
+		Description: description,
+	}
+}
