@@ -19,6 +19,8 @@ type Category struct {
 
 type Product struct {
 	ID         uuid.UUID
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 	Name       string
 	Quantity   int32
 	UserID     uuid.UUID
