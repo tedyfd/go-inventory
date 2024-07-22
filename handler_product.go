@@ -39,5 +39,5 @@ func (apiCfg *apiConfig) handlerCreateProduct(w http.ResponseWriter, r *http.Req
 		respondWithError(w, 400, fmt.Sprintf("couldn't create Product: ", err))
 	}
 
-	respondWithJSON(w, 201, product)
+	respondWithJSON(w, 201, databaseProductToProduct(product))
 }
