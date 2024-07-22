@@ -46,3 +46,25 @@ func databaseCategoryToCategory(dbCategory database.Category) Category {
 		Description: description,
 	}
 }
+
+type Product struct {
+	ID         uuid.UUID `json:"id"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+	Name       string    `json:"name"`
+	Quantity   int       `json:"quantity"`
+	UserID     uuid.UUID `json:"user_id"`
+	categoryID uuid.UUID `json:"category_id"`
+}
+
+func databaseProductToProduct(dbProduct database.Product) Product {
+	return Product{
+		ID:         dbProduct.ID,
+		CreatedAt:  dbProduct.CreatedAt,
+		UpdatedAt:  dbProduct.UpdatedAt,
+		Name:       dbProduct.Name,
+		Quantity:   int(dbProduct.Quantity),
+		UserID:     dbProduct.UserID,
+		categoryID: dbProduct.CategoryID,
+	}
+}

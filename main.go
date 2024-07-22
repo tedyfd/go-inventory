@@ -64,6 +64,7 @@ func main() {
 	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
 	v1Router.Post("/category", apiCfg.middlewareAuth(apiCfg.handlerCreateCategory))
 	v1Router.Delete("/category/{categoryID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteCategory))
+	v1Router.Post("/product", apiCfg.middlewareAuth(apiCfg.handlerCreateProduct))
 
 	router.Mount("/v1", v1Router)
 
