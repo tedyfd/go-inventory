@@ -1,10 +1,11 @@
-package main
+package models
 
 import (
 	"time"
 
+	"go-inventory/internal/database"
+
 	"github.com/google/uuid"
-	"github.com/tedyfd/go-inventory/internal/database"
 )
 
 type User struct {
@@ -17,7 +18,7 @@ type User struct {
 	APIKey    string    `json:"api_key"`
 }
 
-func databaseUserToUser(dbUser database.User) User {
+func DatabaseUserToUser(dbUser database.User) User {
 	return User{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
@@ -35,7 +36,7 @@ type Category struct {
 	Description *string   `json:"description"`
 }
 
-func databaseCategoryToCategory(dbCategory database.Category) Category {
+func DatabaseCategoryToCategory(dbCategory database.Category) Category {
 	var description *string
 	if dbCategory.Description.Valid {
 		description = &dbCategory.Description.String
@@ -57,7 +58,7 @@ type Product struct {
 	categoryID uuid.UUID `json:"category_id"`
 }
 
-func databaseProductToProduct(dbProduct database.Product) Product {
+func DatabaseProductToProduct(dbProduct database.Product) Product {
 	return Product{
 		ID:         dbProduct.ID,
 		CreatedAt:  dbProduct.CreatedAt,

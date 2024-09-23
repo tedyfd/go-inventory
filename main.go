@@ -3,23 +3,22 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"go-inventory/internal/config"
+	"go-inventory/routes"
 	"log"
 	"net/http"
 	"os"
 
+	"go-inventory/internal/database"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"github.com/tedyfd/go-inventory/internal/database"
 
 	"github.com/joho/godotenv"
 
 	//for postgresql driver.
 	_ "github.com/lib/pq"
 )
-
-type apiConfig struct {
-	DB *database.Queries
-}
 
 func main() {
 	godotenv.Load()
@@ -40,11 +39,12 @@ func main() {
 	}
 
 	db := database.New(conn)
-	apiCfg := apiConfig{
+	apiCfg := config.ApiConfig{
 		DB: db,
 	}
 
 	router := chi.NewRouter()
+	chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -56,16 +56,7 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-
-	v1Router.Get("/ready", handlerReadiness)
-	v1Router.Get("/err", handlerErr)
-
-	v1Router.Post("/users", apiCfg.handlerCreateUser)
-	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
-	v1Router.Post("/category", apiCfg.middlewareAuth(apiCfg.handlerCreateCategory))
-	v1Router.Delete("/category/{categoryID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteCategory))
-	v1Router.Post("/product", apiCfg.middlewareAuth(apiCfg.handlerCreateProduct))
-
+	routes.Routes(v1Router, &apiCfg)
 	router.Mount("/v1", v1Router)
 
 	srv := &http.Server{

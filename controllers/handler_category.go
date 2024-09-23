@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"database/sql"
@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"net/http"
 
+	"go-inventory/internal/database"
+	"go-inventory/models"
+
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/tedyfd/go-inventory/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateCategory(w http.ResponseWriter, r *http.Request, user database.User) {
+func (uc *UserController) HandlerCreateCategory(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
@@ -31,7 +33,7 @@ func (apiCfg *apiConfig) handlerCreateCategory(w http.ResponseWriter, r *http.Re
 		description.Valid = true
 	}
 
-	category, err := apiCfg.DB.CreateCategory(r.Context(), database.CreateCategoryParams{
+	category, err := uc.Config.DB.CreateCategory(r.Context(), database.CreateCategoryParams{
 		ID:          uuid.New(),
 		Name:        params.Name,
 		Description: description,
@@ -40,10 +42,10 @@ func (apiCfg *apiConfig) handlerCreateCategory(w http.ResponseWriter, r *http.Re
 		respondWithError(w, 400, fmt.Sprintf("Couldn't create Category: ", err))
 	}
 
-	respondWithJSON(w, 201, databaseCategoryToCategory(category))
+	respondWithJSON(w, 201, models.DatabaseCategoryToCategory(category))
 }
 
-func (apiCfg *apiConfig) handlerDeleteCategory(w http.ResponseWriter, r *http.Request, user database.User) {
+func (uc *UserController) HandlerDeleteCategory(w http.ResponseWriter, r *http.Request, user database.User) {
 	CategoryIDStr := chi.URLParam(r, "categoryID")
 
 	categoryID, err := uuid.Parse(CategoryIDStr)
@@ -53,7 +55,7 @@ func (apiCfg *apiConfig) handlerDeleteCategory(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err = apiCfg.DB.DeleteCategory(r.Context(), categoryID)
+	err = uc.Config.DB.DeleteCategory(r.Context(), categoryID)
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("couldn't delete category: ", err))
 		return

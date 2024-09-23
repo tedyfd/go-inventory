@@ -1,4 +1,4 @@
-module github.com/tedyfd/go-inventory
+module go-inventory
 
 go 1.22.0
 

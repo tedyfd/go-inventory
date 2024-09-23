@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"encoding/json"
@@ -6,11 +6,13 @@ import (
 	"net/http"
 	"time"
 
+	"go-inventory/internal/database"
+	"go-inventory/models"
+
 	"github.com/google/uuid"
-	"github.com/tedyfd/go-inventory/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateProduct(w http.ResponseWriter, r *http.Request, user database.User) {
+func (uc *UserController) HandlerCreateProduct(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name       string    `json:"name"`
 		Quantity   int       `json:"quantity"`
@@ -25,7 +27,7 @@ func (apiCfg *apiConfig) handlerCreateProduct(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	product, err := apiCfg.DB.CreateProduct(r.Context(), database.CreateProductParams{
+	product, err := uc.Config.DB.CreateProduct(r.Context(), database.CreateProductParams{
 		ID:         uuid.New(),
 		CreatedAt:  time.Now().UTC(),
 		UpdatedAt:  time.Now().UTC(),
@@ -39,5 +41,5 @@ func (apiCfg *apiConfig) handlerCreateProduct(w http.ResponseWriter, r *http.Req
 		respondWithError(w, 400, fmt.Sprintf("couldn't create Product: ", err))
 	}
 
-	respondWithJSON(w, 201, databaseProductToProduct(product))
+	respondWithJSON(w, 201, models.DatabaseProductToProduct(product))
 }
