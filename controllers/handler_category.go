@@ -40,9 +40,10 @@ func (uc *UserController) HandlerCreateCategory(w http.ResponseWriter, r *http.R
 	})
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Couldn't create Category: ", err))
+		return
 	}
 
-	respondWithJSON(w, 201, models.DatabaseCategoryToCategory(category))
+	respondWithJSON(w, 201, "Create category success", models.DatabaseCategoryToCategory(category))
 }
 
 func (uc *UserController) HandlerDeleteCategory(w http.ResponseWriter, r *http.Request, user database.User) {
@@ -60,5 +61,5 @@ func (uc *UserController) HandlerDeleteCategory(w http.ResponseWriter, r *http.R
 		respondWithError(w, 400, fmt.Sprintf("couldn't delete category: ", err))
 		return
 	}
-	respondWithJSON(w, 200, struct{}{})
+	respondWithJSON(w, 204, "Delete category success", struct{}{})
 }

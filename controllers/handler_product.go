@@ -39,7 +39,8 @@ func (uc *UserController) HandlerCreateProduct(w http.ResponseWriter, r *http.Re
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("couldn't create Product: ", err))
+		return
 	}
 
-	respondWithJSON(w, 201, models.DatabaseProductToProduct(product))
+	respondWithJSON(w, 201, "Create product success", models.DatabaseProductToProduct(product))
 }

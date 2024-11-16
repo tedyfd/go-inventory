@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,18 +53,32 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 }
 
 const getProduct = `-- name: GetProduct :many
-SELECT id, created_at, updated_at, name, quantity, user_id, category_id FROM product
+SELECT product.id, created_at, updated_at, product.name, quantity, user_id, category_id, category.id, category.name, description FROM product
+INNER JOIN category ON product.category_id = category.id
 `
 
-func (q *Queries) GetProduct(ctx context.Context) ([]Product, error) {
+type GetProductRow struct {
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Name        string
+	Quantity    int32
+	UserID      uuid.UUID
+	CategoryID  uuid.UUID
+	ID_2        uuid.UUID
+	Name_2      string
+	Description sql.NullString
+}
+
+func (q *Queries) GetProduct(ctx context.Context) ([]GetProductRow, error) {
 	rows, err := q.db.QueryContext(ctx, getProduct)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Product
+	var items []GetProductRow
 	for rows.Next() {
-		var i Product
+		var i GetProductRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.CreatedAt,
@@ -72,6 +87,9 @@ func (q *Queries) GetProduct(ctx context.Context) ([]Product, error) {
 			&i.Quantity,
 			&i.UserID,
 			&i.CategoryID,
+			&i.ID_2,
+			&i.Name_2,
+			&i.Description,
 		); err != nil {
 			return nil, err
 		}
@@ -87,12 +105,27 @@ func (q *Queries) GetProduct(ctx context.Context) ([]Product, error) {
 }
 
 const getProductByID = `-- name: GetProductByID :one
-SELECT id, created_at, updated_at, name, quantity, user_id, category_id FROM product WHERE id = $1
+SELECT product.id, created_at, updated_at, product.name, quantity, user_id, category_id, category.id, category.name, description FROM product
+INNER JOIN category ON product.category_id = category.id
+WHERE product.id = $1
 `
 
-func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (Product, error) {
+type GetProductByIDRow struct {
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Name        string
+	Quantity    int32
+	UserID      uuid.UUID
+	CategoryID  uuid.UUID
+	ID_2        uuid.UUID
+	Name_2      string
+	Description sql.NullString
+}
+
+func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (GetProductByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getProductByID, id)
-	var i Product
+	var i GetProductByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
@@ -101,6 +134,9 @@ func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (Product, er
 		&i.Quantity,
 		&i.UserID,
 		&i.CategoryID,
+		&i.ID_2,
+		&i.Name_2,
+		&i.Description,
 	)
 	return i, err
 }

@@ -41,9 +41,9 @@ func (uc *UserController) HandlerCreateUser(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	respondWithJSON(w, 201, models.DatabaseUserToUser(user))
+	respondWithJSON(w, 201, "Create user success", models.DatabaseUserToUser(user))
 }
 
 func (uc *UserController) HandlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
-	respondWithJSON(w, 200, models.DatabaseUserToUser(user))
+	respondWithJSON(w, 200, "Success", models.DatabaseUserToUser(user))
 }
