@@ -17,6 +17,7 @@ func (uc *UserController) HandlerCreateProduct(w http.ResponseWriter, r *http.Re
 		Name       string    `json:"name"`
 		Quantity   int       `json:"quantity"`
 		CategoryID uuid.UUID `json:"category_id"`
+		SellerID   uuid.UUID `json:"seller_id"`
 	}
 	decoder := json.NewDecoder(r.Body)
 
@@ -35,6 +36,7 @@ func (uc *UserController) HandlerCreateProduct(w http.ResponseWriter, r *http.Re
 		Quantity:   int32(params.Quantity),
 		UserID:     user.ID,
 		CategoryID: params.CategoryID,
+		SellerID:   params.SellerID,
 	})
 
 	if err != nil {

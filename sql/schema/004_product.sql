@@ -6,6 +6,7 @@ CREATE TABLE product (
     name TEXT UNIQUE NOT NULL,
     quantity INT NOT NULL,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    seller_id UUID NOT NULL REFERENCES seller(id) ON DELETE CASCADE,
     category_id UUID NOT NULL REFERENCES category(id) ON DELETE CASCADE
 );  
 

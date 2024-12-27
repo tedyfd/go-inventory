@@ -17,6 +17,29 @@ type Category struct {
 	Description sql.NullString
 }
 
+type Customer struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+}
+
+type Order struct {
+	ID         uuid.UUID
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	CustomerID uuid.UUID
+}
+
+type OrderDetail struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Quantity  int32
+	OrderID   uuid.UUID
+	ProductID uuid.UUID
+}
+
 type Product struct {
 	ID         uuid.UUID
 	CreatedAt  time.Time
@@ -24,7 +47,15 @@ type Product struct {
 	Name       string
 	Quantity   int32
 	UserID     uuid.UUID
+	SellerID   uuid.UUID
 	CategoryID uuid.UUID
+}
+
+type Seller struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
 }
 
 type User struct {

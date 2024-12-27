@@ -14,9 +14,9 @@ import (
 )
 
 const createProduct = `-- name: CreateProduct :one
-INSERT INTO product (id, created_at, updated_at, name, quantity, user_id, category_id) 
-VALUES ($1, $2, $3, $4, $5,$6, $7)
-RETURNING id, created_at, updated_at, name, quantity, user_id, category_id
+INSERT INTO product (id, created_at, updated_at, name, quantity, user_id, seller_id, category_id) 
+VALUES ($1, $2, $3, $4, $5,$6, $7, $8)
+RETURNING id, created_at, updated_at, name, quantity, user_id, seller_id, category_id
 `
 
 type CreateProductParams struct {
@@ -26,6 +26,7 @@ type CreateProductParams struct {
 	Name       string
 	Quantity   int32
 	UserID     uuid.UUID
+	SellerID   uuid.UUID
 	CategoryID uuid.UUID
 }
 
@@ -37,6 +38,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 		arg.Name,
 		arg.Quantity,
 		arg.UserID,
+		arg.SellerID,
 		arg.CategoryID,
 	)
 	var i Product
@@ -47,13 +49,14 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 		&i.Name,
 		&i.Quantity,
 		&i.UserID,
+		&i.SellerID,
 		&i.CategoryID,
 	)
 	return i, err
 }
 
 const getProduct = `-- name: GetProduct :many
-SELECT product.id, created_at, updated_at, product.name, quantity, user_id, category_id, category.id, category.name, description FROM product
+SELECT product.id, created_at, updated_at, product.name, quantity, user_id, seller_id, category_id, category.id, category.name, description FROM product
 INNER JOIN category ON product.category_id = category.id
 `
 
@@ -64,6 +67,7 @@ type GetProductRow struct {
 	Name        string
 	Quantity    int32
 	UserID      uuid.UUID
+	SellerID    uuid.UUID
 	CategoryID  uuid.UUID
 	ID_2        uuid.UUID
 	Name_2      string
@@ -86,6 +90,7 @@ func (q *Queries) GetProduct(ctx context.Context) ([]GetProductRow, error) {
 			&i.Name,
 			&i.Quantity,
 			&i.UserID,
+			&i.SellerID,
 			&i.CategoryID,
 			&i.ID_2,
 			&i.Name_2,
@@ -105,7 +110,7 @@ func (q *Queries) GetProduct(ctx context.Context) ([]GetProductRow, error) {
 }
 
 const getProductByID = `-- name: GetProductByID :one
-SELECT product.id, created_at, updated_at, product.name, quantity, user_id, category_id, category.id, category.name, description FROM product
+SELECT product.id, created_at, updated_at, product.name, quantity, user_id, seller_id, category_id, category.id, category.name, description FROM product
 INNER JOIN category ON product.category_id = category.id
 WHERE product.id = $1
 `
@@ -117,6 +122,7 @@ type GetProductByIDRow struct {
 	Name        string
 	Quantity    int32
 	UserID      uuid.UUID
+	SellerID    uuid.UUID
 	CategoryID  uuid.UUID
 	ID_2        uuid.UUID
 	Name_2      string
@@ -133,6 +139,7 @@ func (q *Queries) GetProductByID(ctx context.Context, id uuid.UUID) (GetProductB
 		&i.Name,
 		&i.Quantity,
 		&i.UserID,
+		&i.SellerID,
 		&i.CategoryID,
 		&i.ID_2,
 		&i.Name_2,
@@ -147,7 +154,7 @@ SET updated_at = NOW(),
 name = $1,
 quantity = $2
 WHERE id = $3
-RETURNING id, created_at, updated_at, name, quantity, user_id, category_id
+RETURNING id, created_at, updated_at, name, quantity, user_id, seller_id, category_id
 `
 
 type UpdateProductParams struct {
@@ -166,6 +173,7 @@ func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (P
 		&i.Name,
 		&i.Quantity,
 		&i.UserID,
+		&i.SellerID,
 		&i.CategoryID,
 	)
 	return i, err

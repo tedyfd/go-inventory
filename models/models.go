@@ -69,3 +69,75 @@ func DatabaseProductToProduct(dbProduct database.Product) Product {
 		categoryID: dbProduct.CategoryID,
 	}
 }
+
+type Customer struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Name      string    `json:"name"`
+}
+
+func DatabaseCustomerToCustomer(dbCustomer database.Customer) Customer {
+	return Customer{
+		ID:        dbCustomer.ID,
+		CreatedAt: dbCustomer.CreatedAt,
+		UpdatedAt: dbCustomer.UpdatedAt,
+		Name:      dbCustomer.Name,
+	}
+}
+
+func DatabaseCustomersToCustomers(dbCustomer []database.Customer) []Customer {
+	transform := make([]Customer, len(dbCustomer))
+	for i, customer := range dbCustomer {
+		transform[i] = Customer{
+			ID:        customer.ID,
+			CreatedAt: customer.CreatedAt,
+			UpdatedAt: customer.UpdatedAt,
+			Name:      customer.Name,
+		}
+	}
+	return transform
+}
+
+type Seller struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Name      string    `json:"name"`
+}
+
+func DatabaseSellersToSellers(dbSeller []database.Seller) []Seller {
+	transform := make([]Seller, len(dbSeller))
+	for i, seller := range dbSeller {
+		transform[i] = Seller{
+			ID:        seller.ID,
+			CreatedAt: seller.CreatedAt,
+			UpdatedAt: seller.UpdatedAt,
+			Name:      seller.Name,
+		}
+	}
+	return transform
+}
+
+func DatabaseSellerToSeller(dbSeller database.Seller) Seller {
+	return Seller{
+		ID:        dbSeller.ID,
+		CreatedAt: dbSeller.CreatedAt,
+		UpdatedAt: dbSeller.UpdatedAt,
+		Name:      dbSeller.Name,
+	}
+}
+
+type Order struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func DatabaseOrderToOrder(dbOrder database.Order) Order {
+	return Order{
+		ID:        dbOrder.ID,
+		CreatedAt: dbOrder.CreatedAt,
+		UpdatedAt: dbOrder.UpdatedAt,
+	}
+}
