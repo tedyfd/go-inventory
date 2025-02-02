@@ -95,6 +95,8 @@ func (uc *UserController) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		Value:    tokenString,
 		Expires:  expirationTime,
 		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
 	}
 
 	http.SetCookie(w, &cookie)

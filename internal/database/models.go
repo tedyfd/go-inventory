@@ -32,11 +32,10 @@ type Order struct {
 }
 
 type OrderDetail struct {
-	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Quantity  int32
 	OrderID   uuid.UUID
+	Quantity  int32
 	ProductID uuid.UUID
 }
 

@@ -9,6 +9,7 @@ import (
 	"go-inventory/internal/database"
 	"go-inventory/models"
 
+	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 )
 
@@ -45,4 +46,27 @@ func (uc *UserController) HandlerCreateProduct(w http.ResponseWriter, r *http.Re
 	}
 
 	respondWithJSON(w, 201, "Create product success", models.DatabaseProductToProduct(product))
+}
+
+func (uc *UserController) HandlerGetProduct(w http.ResponseWriter, r *http.Request, user database.User) {
+	product, _ := uc.Config.DB.GetProduct(r.Context())
+	respondWithJSON(w, 200, "Success", models.DatabaseProductsToProducts(product))
+}
+
+func (uc *UserController) HandlerDeleteProduct(w http.ResponseWriter, r *http.Request, user database.User) {
+	ProductIDStr := chi.URLParam(r, "productID")
+
+	productID, err := uuid.Parse(ProductIDStr)
+
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't parse product ID: ", err))
+		return
+	}
+
+	err = uc.Config.DB.DeleteProduct(r.Context(), productID)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't delete product: ", err))
+		return
+	}
+	respondWithJSON(w, 204, "Delete product success", struct{}{})
 }

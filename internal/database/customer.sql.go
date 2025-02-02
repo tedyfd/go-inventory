@@ -44,6 +44,15 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) 
 	return i, err
 }
 
+const deleteCustomer = `-- name: DeleteCustomer :exec
+DELETE FROM customer WHERE id=$1
+`
+
+func (q *Queries) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteCustomer, id)
+	return err
+}
+
 const getCustomer = `-- name: GetCustomer :many
 SELECT id, created_at, updated_at, name FROM customer
 `

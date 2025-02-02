@@ -14,15 +14,14 @@ import (
 
 const createOrderDetail = `-- name: CreateOrderDetail :one
 INSERT INTO order_detail(
-    id, created_at, updated_at, 
+    created_at, updated_at, 
     order_id, quantity, product_id
     ) 
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, created_at, updated_at, quantity, order_id, product_id
+VALUES ($1, $2, $3, $4, $5)
+RETURNING created_at, updated_at, order_id, quantity, product_id
 `
 
 type CreateOrderDetailParams struct {
-	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	OrderID   uuid.UUID
@@ -32,7 +31,6 @@ type CreateOrderDetailParams struct {
 
 func (q *Queries) CreateOrderDetail(ctx context.Context, arg CreateOrderDetailParams) (OrderDetail, error) {
 	row := q.db.QueryRowContext(ctx, createOrderDetail,
-		arg.ID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 		arg.OrderID,
@@ -41,11 +39,10 @@ func (q *Queries) CreateOrderDetail(ctx context.Context, arg CreateOrderDetailPa
 	)
 	var i OrderDetail
 	err := row.Scan(
-		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Quantity,
 		&i.OrderID,
+		&i.Quantity,
 		&i.ProductID,
 	)
 	return i, err

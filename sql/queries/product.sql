@@ -4,8 +4,18 @@ VALUES ($1, $2, $3, $4, $5,$6, $7, $8)
 RETURNING *;
 
 -- name: GetProduct :many
-SELECT * FROM product
-INNER JOIN category ON product.category_id = category.id;
+SELECT product.id, 
+	product.name, 
+	product.quantity,
+	product.created_at, 
+	product.updated_at, 
+	category.name as category_name,
+	seller.name as seller_name,
+	users.name as user_name
+	FROM product
+INNER JOIN category ON product.category_id = category.id
+INNER JOIN seller ON product.seller_id = seller.id
+INNER JOIN users ON product.user_id = users.id;
 
 -- name: GetProductByID :one
 SELECT * FROM product
@@ -20,5 +30,5 @@ quantity = $2
 WHERE id = $3
 RETURNING *;
 
--- NAME: DeleteProduct :exec
+-- name: DeleteProduct :exec
 DELETE FROM product WHERE id = $1;

@@ -55,23 +55,39 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 	return i, err
 }
 
+const deleteProduct = `-- name: DeleteProduct :exec
+DELETE FROM product WHERE id = $1
+`
+
+func (q *Queries) DeleteProduct(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteProduct, id)
+	return err
+}
+
 const getProduct = `-- name: GetProduct :many
-SELECT product.id, created_at, updated_at, product.name, quantity, user_id, seller_id, category_id, category.id, category.name, description FROM product
+SELECT product.id, 
+	product.name, 
+	product.quantity,
+	product.created_at, 
+	product.updated_at, 
+	category.name as category_name,
+	seller.name as seller_name,
+	users.name as user_name
+	FROM product
 INNER JOIN category ON product.category_id = category.id
+INNER JOIN seller ON product.seller_id = seller.id
+INNER JOIN users ON product.user_id = users.id
 `
 
 type GetProductRow struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Name        string
-	Quantity    int32
-	UserID      uuid.UUID
-	SellerID    uuid.UUID
-	CategoryID  uuid.UUID
-	ID_2        uuid.UUID
-	Name_2      string
-	Description sql.NullString
+	ID           uuid.UUID
+	Name         string
+	Quantity     int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	CategoryName string
+	SellerName   string
+	UserName     string
 }
 
 func (q *Queries) GetProduct(ctx context.Context) ([]GetProductRow, error) {
@@ -85,16 +101,13 @@ func (q *Queries) GetProduct(ctx context.Context) ([]GetProductRow, error) {
 		var i GetProductRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
 			&i.Name,
 			&i.Quantity,
-			&i.UserID,
-			&i.SellerID,
-			&i.CategoryID,
-			&i.ID_2,
-			&i.Name_2,
-			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CategoryName,
+			&i.SellerName,
+			&i.UserName,
 		); err != nil {
 			return nil, err
 		}

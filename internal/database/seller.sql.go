@@ -44,6 +44,15 @@ func (q *Queries) CreateSeller(ctx context.Context, arg CreateSellerParams) (Sel
 	return i, err
 }
 
+const deleteSeller = `-- name: DeleteSeller :exec
+DELETE FROM seller WHERE id=$1
+`
+
+func (q *Queries) DeleteSeller(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteSeller, id)
+	return err
+}
+
 const getSeller = `-- name: GetSeller :many
 SELECT id, created_at, updated_at, name FROM seller
 `

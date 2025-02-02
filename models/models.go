@@ -48,6 +48,18 @@ func DatabaseCategoryToCategory(dbCategory database.Category) Category {
 	}
 }
 
+func DatabasecategoriesTocategories(dbCategory []database.Category) []Category {
+	transform := make([]Category, len(dbCategory))
+	for i, category := range dbCategory {
+		transform[i] = Category{
+			ID:          category.ID,
+			Name:        category.Name,
+			Description: &category.Description.String,
+		}
+	}
+	return transform
+}
+
 type Product struct {
 	ID         uuid.UUID `json:"id"`
 	CreatedAt  time.Time `json:"created_at"`
@@ -56,6 +68,17 @@ type Product struct {
 	Quantity   int       `json:"quantity"`
 	UserID     uuid.UUID `json:"user_id"`
 	categoryID uuid.UUID `json:"category_id"`
+}
+
+type Products struct {
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	Name         string    `json:"name"`
+	Quantity     int       `json:"quantity"`
+	CategoryName string    `json:"category_name"`
+	SellerName   string    `json:"seller_name"`
+	UserName     string    `json:"user_name"`
 }
 
 func DatabaseProductToProduct(dbProduct database.Product) Product {
@@ -68,6 +91,23 @@ func DatabaseProductToProduct(dbProduct database.Product) Product {
 		UserID:     dbProduct.UserID,
 		categoryID: dbProduct.CategoryID,
 	}
+}
+
+func DatabaseProductsToProducts(dbProducts []database.GetProductRow) []Products {
+	transform := make([]Products, len(dbProducts))
+	for i, product := range dbProducts {
+		transform[i] = Products{
+			ID:           product.ID,
+			CreatedAt:    product.CreatedAt,
+			UpdatedAt:    product.UpdatedAt,
+			Name:         product.Name,
+			Quantity:     int(product.Quantity),
+			CategoryName: product.CategoryName,
+			SellerName:   product.SellerName,
+			UserName:     product.UserName,
+		}
+	}
+	return transform
 }
 
 type Customer struct {

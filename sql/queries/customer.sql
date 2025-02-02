@@ -20,3 +20,6 @@ name = $1,
 updated_at = $2
 WHERE id = $3
 RETURNING *;
+
+-- name: DeleteCustomer :exec
+DELETE FROM customer WHERE id=$1;

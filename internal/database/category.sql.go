@@ -39,3 +39,62 @@ func (q *Queries) DeleteCategory(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteCategory, id)
 	return err
 }
+
+const getCategory = `-- name: GetCategory :many
+SELECT id, name, description FROM category
+`
+
+func (q *Queries) GetCategory(ctx context.Context) ([]Category, error) {
+	rows, err := q.db.QueryContext(ctx, getCategory)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Category
+	for rows.Next() {
+		var i Category
+		if err := rows.Scan(&i.ID, &i.Name, &i.Description); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCategoryByName = `-- name: GetCategoryByName :one
+SELECT id, name, description FROM category WHERE name=$1
+`
+
+func (q *Queries) GetCategoryByName(ctx context.Context, name string) (Category, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryByName, name)
+	var i Category
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}
+
+const updateCategory = `-- name: UpdateCategory :one
+UPDATE category SET
+name = $1,
+description = $2
+WHERE id = $3
+RETURNING id, name, description
+`
+
+type UpdateCategoryParams struct {
+	Name        string
+	Description sql.NullString
+	ID          uuid.UUID
+}
+
+func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error) {
+	row := q.db.QueryRowContext(ctx, updateCategory, arg.Name, arg.Description, arg.ID)
+	var i Category
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}

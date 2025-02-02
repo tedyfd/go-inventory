@@ -83,3 +83,21 @@ func (uc *UserController) HandlerUpdateSeller(w http.ResponseWriter, r *http.Req
 	}
 	respondWithJSON(w, 200, "Success update seller", models.DatabaseSellerToSeller(seller))
 }
+
+func (uc *UserController) HandlerDeleteSeller(w http.ResponseWriter, r *http.Request, user database.User) {
+	SellerIDStr := chi.URLParam(r, "sellerID")
+
+	sellerID, err := uuid.Parse(SellerIDStr)
+
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't parse seller ID: ", err))
+		return
+	}
+
+	err = uc.Config.DB.DeleteSeller(r.Context(), sellerID)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't delete category: ", err))
+		return
+	}
+	respondWithJSON(w, 204, "Delete Seller success", struct{}{})
+}

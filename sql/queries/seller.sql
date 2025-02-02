@@ -18,3 +18,5 @@ updated_at = $2
 WHERE id = $3
 RETURNING *;
 
+-- name: DeleteSeller :exec
+DELETE FROM seller WHERE id=$1;

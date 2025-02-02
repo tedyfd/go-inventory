@@ -1,9 +1,9 @@
 -- name: CreateOrderDetail :one
 INSERT INTO order_detail(
-    id, created_at, updated_at, 
+    created_at, updated_at, 
     order_id, quantity, product_id
     ) 
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
 -- name: CreateOrderDetailAndUpdateProduct :one
